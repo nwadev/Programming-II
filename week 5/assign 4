@@ -1,0 +1,75 @@
+# Chukwuemka Nwachukwu
+# W211379501
+# Cosc - Intro to Python 2
+
+from fractions import Fraction
+
+
+class RationalNumberProcessor:
+    def __init__(self, input_filename, output_filename):
+        self.input_filename = input_filename
+        self.output_filename = output_filename
+
+    def construct_rational_number(self, numerator, denominator):
+        try:
+            rational_number = Fraction(numerator, denominator)
+            return rational_number
+        except ZeroDivisionError:
+            return "Cannot divide by zero."
+
+    def handle_rational_number_errors(self, error):
+        if isinstance(error, ZeroDivisionError):
+            return "Cannot divide by zero."
+        else:
+            return "An unknown error occurred."
+
+    def handle_input_file_errors(self, error):
+        if isinstance(error, FileNotFoundError):
+            return "Input file not found."
+        else:
+            return "An unknown error occurred."
+
+    def read_lines_from_input_file(self):
+        try:
+            with open(self.input_filename, 'r') as f:
+                lines = f.readlines()
+                return lines
+        except FileNotFoundError as e:
+            return self.handle_input_file_errors(e)
+
+    def process_input_data(self, lines):
+        results = []
+        for line in lines:
+            try:
+                numerator, denominator = map(int, line.split(','))
+                rational_number = self.construct_rational_number(
+                    numerator, denominator)
+                results.append(rational_number)
+            except ValueError:
+                results.append("Invalid input data.")
+            except ZeroDivisionError as e:
+                results.append(self.handle_rational_number_errors(e))
+        return results
+
+    def write_results_to_output_file(self, results):
+        with open(self.output_filename, 'w') as f:
+            for result in results:
+                f.write(str(result) + '\n')
+
+    def main(self):
+        lines = self.read_lines_from_input_file()
+
+        if isinstance(lines, str) and lines.startswith("Error"):
+            print(lines)
+            return
+
+        results = self.process_input_data(lines)
+
+        self.write_results_to_output_file(results)
+
+
+if __name__ == '__main__':
+    input_file = 'data_01.txt'
+    output_file = 'output.txt'
+    processor = RationalNumberProcessor(input_file, output_file)
+    processor.main()

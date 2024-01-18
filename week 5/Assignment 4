@@ -1,0 +1,97 @@
+# Chukwuemka Nwachukwu
+# W211379501
+# Cosc - Intro to Python 2
+
+from fractions import Fraction
+
+
+class RationalNumberProcessor:
+    def __init__(self, input_filename, output_filename):
+
+        # Initializes the RationalNumberProcessor object with the input and output filenames.
+
+        self.input_filename = input_filename
+        self.output_filename = output_filename
+
+    def construct_rational_number(self, numerator, denominator):
+
+        # Constructs a rational number from the given numerator and denominator.
+
+        try:
+            rational_number = Fraction(numerator, denominator)
+            return rational_number
+        except ZeroDivisionError:
+            return "Error: Cannot divide by zero."
+
+    def handle_rational_number_errors(self, error):
+
+        # Handles any errors that may occur when constructing a rational number.
+
+        if isinstance(error, ZeroDivisionError):
+            return "Error: Cannot divide by zero."
+        else:
+            return "Error: An unknown error occurred."
+
+    def handle_input_file_errors(self, error):
+        """
+        Handles any errors that may occur when reading from the input file.
+        """
+        if isinstance(error, FileNotFoundError):
+            return "Error: Input file not found."
+        else:
+            return "Error: An unknown error occurred."
+
+    def read_lines_from_input_file(self):
+        """
+        Reads lines from the input file and returns them as a list of strings.
+        """
+        try:
+            with open(self.input_filename, 'r') as f:
+                lines = f.readlines()
+                return lines
+        except FileNotFoundError as e:
+            return self.handle_input_file_errors(e)
+
+    def process_input_data(self, lines):
+        """
+        Processes the input data and returns a list of rational numbers or error messages.
+        """
+        results = []
+        for line in lines:
+            try:
+                numerator, denominator = map(int, line.split())
+                rational_number = self.construct_rational_number(
+                    numerator, denominator)
+                results.append(rational_number)
+            except ValueError:
+                results.append("Error: Invalid input data.")
+            except ZeroDivisionError as e:
+                results.append(self.handle_rational_number_errors(e))
+        return results
+
+    def write_results_to_output_file(self, results):
+        """
+        Writes the results to the output file.
+        """
+        with open(self.output_filename, 'w') as f:
+            for result in results:
+                f.write(str(result) + '\n')
+
+    def main(self):
+        """
+        Main function to process the input and output files.
+        """
+        lines = self.read_lines_from_input_file()
+
+        if isinstance(lines, str) and lines.startswith("Error"):
+            print(lines)
+            return
+
+        results = self.process_input_data(lines)
+
+        self.write_results_to_output_file(results)
+
+
+if __name__ == '__main__':
+    processor = RationalNumberProcessor('data_01.txt', 'output.txt')
+    processor.main()

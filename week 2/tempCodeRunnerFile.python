@@ -1,0 +1,13 @@
+def __mul__(self, other):
+        if isinstance(other, Rational):
+            numerator = self. _num*other. _num
+            denominator = self. _den*other. _den
+            return Rational(numerator, denominator)
+        elif isinstance(other, int):
+            numerator = self. _num*other
+            denominator = self. _den
+            return Rational(numerator, denominator)
+        elif isinstance(other, float):
+            return float(self)*other
+        else:
+            return NotImplemented
